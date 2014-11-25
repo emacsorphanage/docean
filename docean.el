@@ -6,7 +6,7 @@
 ;; URL: https://github.com/emacs-pe/docean.el
 ;; Keywords: convenience
 ;; Version: 0.0.1
-;; Package-Requires: ((request "0.2.0") (ctable "0.1.2"))
+;; Package-Requires: ((emacs "24") (cl-lib "0.5") (request "0.2.0"))
 
 ;; This file is NOT part of GNU Emacs.
 
