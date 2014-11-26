@@ -131,18 +131,18 @@
     (setf (url-filename urlobj) endpoint)
     (url-recreate-url urlobj)))
 
-(defun* docean-request (endpoint
-                        &key
-                        (type "GET")
-                        (params nil)
-                        (data nil)
-                        (parser 'buffer-string)
-                        (error 'docean-default-callback)
-                        (success 'docean-default-callback)
-                        (headers nil)
-                        (timeout nil)
-                        (sync nil)
-                        (status-code nil))
+(cl-defun docean-request (endpoint
+                          &key
+                          (type "GET")
+                          (params nil)
+                          (data nil)
+                          (parser 'buffer-string)
+                          (error 'docean-default-callback)
+                          (success 'docean-default-callback)
+                          (headers nil)
+                          (timeout nil)
+                          (sync nil)
+                          (status-code nil))
   "Process a request to a DigitalOcean api endpoint.
 
 All the calls to the DigitalOcean api requiere to send the key."
@@ -162,7 +162,7 @@ All the calls to the DigitalOcean api requiere to send the key."
              :status-code status-code
              :sync sync)))
 
-(defun* docean-default-callback (&key data response error-thrown &allow-other-keys)
+(cl-defun docean-default-callback (&key data response error-thrown &allow-other-keys)
   (with-current-buffer (get-buffer-create docean-debug-buffer-name)
     (erase-buffer)
     (when error-thrown
@@ -193,7 +193,7 @@ All the calls to the DigitalOcean api requiere to send the key."
   "Generate droplets table entries."
   (mapcar #'docean--generate-table-droplet-entry (docean-droplets)))
 
-(defun* docean-action-callback (&key data response error-thrown &allow-other-keys)
+(cl-defun docean-action-callback (&key data response error-thrown &allow-other-keys)
   (let ((action (cdr (assq 'action data))))
     (message "%s action started at %s with id %s"
              (cdr-safe (assq 'type action))
@@ -312,9 +312,9 @@ All the calls to the DigitalOcean api requiere to send the key."
   (add-hook 'tabulated-list-revert-hook #'docean-refetch-droplets nil t)
   (tabulated-list-init-header))
 
-(defun* docean-droplets (&key
-                         (page nil)
-                         (per-page docean-default-per-page))
+(cl-defun docean-droplets (&key
+                           (page nil)
+                           (per-page docean-default-per-page))
   "Fetch the available user droplets."
   (if docean-droplets-already-fetched
       docean-droplets
@@ -323,7 +323,7 @@ All the calls to the DigitalOcean api requiere to send the key."
            (response (docean-request "/v2/droplets"
                                      :parser 'json-read
                                      :params params
-                                     :success (function*
+                                     :success (cl-function
                                                (lambda (&key data &allow-other-keys)
                                                  (message "docean request complete")
                                                  (setq docean-droplets-already-fetched t
@@ -361,9 +361,9 @@ All the calls to the DigitalOcean api requiere to send the key."
   (add-hook 'tabulated-list-revert-hook #'docean-refetch-actions nil t)
   (tabulated-list-init-header))
 
-(defun* docean-actions (&key
-                        (page nil)
-                        (per-page docean-default-per-page))
+(cl-defun docean-actions (&key
+                          (page nil)
+                          (per-page docean-default-per-page))
   "Fetch the actions executed on the current account."
   (if docean-actions-already-fetched
       docean-actions
@@ -372,7 +372,7 @@ All the calls to the DigitalOcean api requiere to send the key."
            (response (docean-request "/v2/actions"
                                      :parser 'json-read
                                      :params params
-                                     :success (function*
+                                     :success (cl-function
                                                (lambda (&key data response &allow-other-keys)
                                                  (message "docean request complete")
                                                  (setq docean-actions-already-fetched t
