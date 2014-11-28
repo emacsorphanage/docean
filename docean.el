@@ -105,8 +105,8 @@
 (defun docean-action-create (data)
   "Create a `docean-action' struct from an api response DATA."
   (apply 'docean-action--create (cl-loop for (key . value)
-                                        in data
-                                        append (list (intern (format ":%s" key)) value))))
+                                         in data
+                                         append (list (intern (format ":%s" key)) value))))
 
 (cl-defstruct (docean-droplet (:constructor docean-droplet--create))
   "A structure holding all the information of a droplet."
@@ -193,7 +193,7 @@ All the calls to the DigitalOcean api requiere to send the key."
   "Generate droplets table entries."
   (mapcar #'docean--generate-table-droplet-entry (docean-droplets)))
 
-(cl-defun docean-action-callback (&key data response error-thrown &allow-other-keys)
+(cl-defun docean-action-callback (&key data &allow-other-keys)
   (let ((action (cdr (assq 'action data))))
     (message "%s action started at %s with id %s"
              (cdr-safe (assq 'type action))
@@ -212,10 +212,10 @@ All the calls to the DigitalOcean api requiere to send the key."
   "Read a DigitalOcean droplet id."
   (list (if (and (eq major-mode 'docean-droplet-list-mode) (tabulated-list-get-id))
             (number-to-string (tabulated-list-get-id))
-          (ido-completing-read "droplet id: "
-                               (mapcar #'(lambda (e) (number-to-string (car e))) (docean-droplets))
-                               nil nil nil nil
-                               (tabulated-list-get-id)))))
+          (completing-read "droplet id: "
+                           (mapcar #'(lambda (e) (number-to-string (car e))) (docean-droplets))
+                           nil nil nil nil
+                           (tabulated-list-get-id)))))
 
 ;;;###autoload
 (defun docean-reboot-droplet (id)
@@ -283,7 +283,7 @@ All the calls to the DigitalOcean api requiere to send the key."
   "Snapshot a droplet with ID and NAME."
   (interactive (docean-read-droplet-id))
   (docean--droplet-action id (json-encode `(("type" . "snapshot")
-                                           ("name" . ,(or name (read-string "Snapshot name: ")))))))
+                                            ("name" . ,(or name (read-string "Snapshot name: ")))))))
 
 (defvar docean-droplet-list-mode-map
   (let ((map (make-keymap)))
