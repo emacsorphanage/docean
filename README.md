@@ -6,52 +6,38 @@
 
 > Note: `docean.el` uses the [API v2.0](https://developers.digitalocean.com/v2/) of DigitalOcean.
 
-`docean.el` enables an easy interaction with DigitalOcean from Emacs.
+`docean.el` enables an easy interaction with DigitalOcean from
+Emacs.
 
-Features:
+### Features
+
  + Show list of droplets.
  + Perform [droplet actions][].
  + Show actions performed by an account.
 
 ### Usage
 
-To configure your account you need generate an api key in https://cloud.digitalocean.com/settings/applications.
-and to set up, you can follow any of the following options:
+To configure your account you need generate an api key in
+https://cloud.digitalocean.com/settings/applications.  and to set
+up, you can follow any of the following options:
 
  + Add `(setq docean-oauth-token "mytoken")` to your `init.el`
  + Set the environment variable `DO_API_TOKEN`.
 
 To show your droplets you can use `M-x docean-droplet-list`.
 
-[droplet actions]: https://developers.digitalocean.com/#droplet-actions
-
 ### TODO
 
 + [ ] Handle `meta` abd `links` in API responses.
-+ [ ] Allow creation of droplets.
+
+[droplet actions]: https://developers.digitalocean.com/#droplet-actions
 
 ### Function Documentation
 
 
-#### `(docean-action-create DATA)`
-
-Create a `docean-action` struct from an api response DATA.
-
-#### `(docean-droplet-create DATA)`
-
-Create a `docean-droplet` struct from an api response DATA.
-
 #### `(docean-oauth-token)`
 
 Return the configured DigitalOcean token.
-
-#### `(docean-endpoint-url ENDPOINT)`
-
-Return a DigitalOcean absolure url of an ENDPOINT.
-
-#### `(docean-read-droplet-id)`
-
-Read a DigitalOcean droplet id.
 
 #### `(docean-reboot-droplet ID)`
 

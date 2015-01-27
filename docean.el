@@ -30,27 +30,28 @@
 ;;
 ;; > Note: `docean.el' uses the [API v2.0](https://developers.digitalocean.com/v2/) of DigitalOcean.
 ;;
-;; `docean.el' enables an easy interaction with DigitalOcean from Emacs.
+;; `docean.el' enables an easy interaction with DigitalOcean from
+;; Emacs.
 ;;
-;; Features:
+;;; Features:
 ;;  + Show list of droplets.
 ;;  + Perform [droplet actions][].
 ;;  + Show actions performed by an account.
 ;;
 ;;; Usage:
-;; To configure your account you need generate an api key in https://cloud.digitalocean.com/settings/applications.
-;; and to set up, you can follow any of the following options:
+;; To configure your account you need generate an api key in
+;; https://cloud.digitalocean.com/settings/applications.  and to set
+;; up, you can follow any of the following options:
 ;;
 ;;  + Add `(setq docean-oauth-token "mytoken")` to your `init.el'
 ;;  + Set the environment variable `DO_API_TOKEN'.
 ;;
 ;; To show your droplets you can use `M-x docean-droplet-list`.
 ;;
-;; [droplet actions]: https://developers.digitalocean.com/#droplet-actions
-
 ;;; TODO:
 ;; + [ ] Handle `meta' abd `links' in API responses.
-;; + [ ] Allow creation of droplets.
+;;
+;; [droplet actions]: https://developers.digitalocean.com/#droplet-actions
 
 ;;; Code:
 
@@ -102,7 +103,7 @@
   "A structure holding all the information of an action."
   id status type started_at completed_at resource_id resource_type region)
 
-(defun docean-action-create (data)
+(defun docean--action-create (data)
   "Create a `docean-action' struct from an api response DATA."
   (apply 'docean-action--create (cl-loop for (key . value)
                                          in data
@@ -113,7 +114,7 @@
   id name memory vcpus disk region image size locked created_at status networks
   kernel backup_ids snapshot_ids features size_slug)
 
-(defun docean-droplet-create (data)
+(defun docean--droplet-create (data)
   "Create a `docean-droplet' struct from an api response DATA."
   (apply 'docean-droplet--create (cl-loop for (key . value)
                                           in data
@@ -125,7 +126,7 @@
       (getenv "DO_API_TOKEN")     ;; XXX: Used by dopy, and by extend ansible.
       (error "You need to generate a personal access token.  https://cloud.digitalocean.com/settings/applications")))
 
-(defun docean-endpoint-url (endpoint)
+(defun docean--endpoint-url (endpoint)
   "Return a DigitalOcean absolure url of an ENDPOINT."
   (let ((urlobj (url-generic-parse-url docean-api-baseurl)))
     (setf (url-filename urlobj) endpoint)
@@ -149,7 +150,7 @@ All the calls to the DigitalOcean api requiere to send the key."
   (let ((headers (append headers
                          `(("Content-Type" . "application/json")
                            ("Authorization". ,(format "Bearer %s" (docean-oauth-token)))))))
-    (request (docean-endpoint-url endpoint)
+    (request (docean--endpoint-url endpoint)
              :type type
              :data data
              :params params
@@ -179,7 +180,7 @@ All the calls to the DigitalOcean api requiere to send the key."
 (defun docean--create-droplet-item (data)
   "Create an droplet item from an response DATA."
   (cons (cdr-safe (assq 'id data))
-        (docean-droplet-create data)))
+        (docean--droplet-create data)))
 
 (defun docean--generate-table-droplet-entry (item)
   "Return a table entry from a ITEM."
@@ -208,96 +209,96 @@ All the calls to the DigitalOcean api requiere to send the key."
                   :parser 'json-read
                   :success 'docean-action-callback))
 
-(defun docean-read-droplet-id ()
+(defun docean--read-droplet-id ()
   "Read a DigitalOcean droplet id."
   (list (if (and (eq major-mode 'docean-droplet-list-mode) (tabulated-list-get-id))
             (number-to-string (tabulated-list-get-id))
           (completing-read "droplet id: "
-                           (mapcar #'(lambda (e) (number-to-string (car e))) (docean-droplets))
+                           (mapcar (lambda (e) (number-to-string (car e))) (docean-droplets))
                            nil nil nil nil
                            (tabulated-list-get-id)))))
 
 ;;;###autoload
 (defun docean-reboot-droplet (id)
   "Reboot a droplet identified by ID."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode '(("type" . "reboot")))))
 
 ;;;###autoload
 (defun docean-power-cicle-droplet (id)
   "Power cicle a droplet identified by ID."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode '(("type" . "power_cycle")))))
 
 ;;;###autoload
 (defun docean-shutdown-droplet (id)
   "Shutdown a droplet identified by ID."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode '(("type" . "shutdown")))))
 
 ;;;###autoload
 (defun docean-power-off-droplet (id)
   "Power off a droplet identified by ID."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode '(("type" . "power_off")))))
 
 ;;;###autoload
 (defun docean-power-on-droplet (id)
   "Reboot a droplet identified by ID."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode '(("type" . "power_on")))))
 
 ;;;###autoload
 (defun docean-password-reset-droplet (id)
   "Reset password a droplet identified by ID."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode '(("type" . "password_reset")))))
 
 ;;;###autoload
 (defun docean-enable-ipv6-droplet (id)
   "Enable ipv6 to a droplet identified by ID."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode '(("type" . "enable_ipv6")))))
 
 ;;;###autoload
 (defun docean-disable-backups-droplet (id)
   "Disable backups a droplet identified by ID."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode '(("type" . "disable_backups")))))
 
 ;;;###autoload
 (defun docean-enable-private-networking-droplet (id)
   "Enable private networking a droplet identified by ID."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode '(("type" . "enable_private_networking")))))
 
 ;;;###autoload
 (defun docean-rename-droplet (id &optional name)
   "Rename a droplet with ID and NAME."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode `(("type" . "rename")
                                             ("name" . ,(or name (read-string "New droplet name: ")))))))
 
 ;;;###autoload
 (defun docean-snapshot-droplet (id &optional name)
   "Snapshot a droplet with ID and NAME."
-  (interactive (docean-read-droplet-id))
+  (interactive (docean--read-droplet-id))
   (docean--droplet-action id (json-encode `(("type" . "snapshot")
                                             ("name" . ,(or name (read-string "Snapshot name: ")))))))
 
 (defvar docean-droplet-list-mode-map
   (let ((map (make-keymap)))
-    (define-key map (kbd "R") 'docean-reboot-droplet)
-    (define-key map (kbd "C") 'docean-power-cicle-droplet)
-    (define-key map (kbd "S") 'docean-shutdown-droplet)
-    (define-key map (kbd "H") 'docean-power-off-droplet)
-    (define-key map (kbd "U") 'docean-power-on-droplet)
-    (define-key map (kbd "P") 'docean-password-reset-droplet)
-    (define-key map (kbd "I") 'docean-enable-ipv6-droplet)
-    (define-key map (kbd "B") 'docean-disable-backups-droplet)
-    (define-key map (kbd "N") 'docean-enable-private-networking-droplet)
-    (define-key map (kbd "r") 'docean-rename-droplet)
-    (define-key map (kbd "s") 'docean-snapshot-droplet)
+    (define-key map (kbd "R") #'docean-reboot-droplet)
+    (define-key map (kbd "C") #'docean-power-cicle-droplet)
+    (define-key map (kbd "S") #'docean-shutdown-droplet)
+    (define-key map (kbd "H") #'docean-power-off-droplet)
+    (define-key map (kbd "U") #'docean-power-on-droplet)
+    (define-key map (kbd "P") #'docean-password-reset-droplet)
+    (define-key map (kbd "I") #'docean-enable-ipv6-droplet)
+    (define-key map (kbd "B") #'docean-disable-backups-droplet)
+    (define-key map (kbd "N") #'docean-enable-private-networking-droplet)
+    (define-key map (kbd "r") #'docean-rename-droplet)
+    (define-key map (kbd "s") #'docean-snapshot-droplet)
     map)
   "Keymap for docean-droplet-list-mode.")
 
@@ -319,18 +320,18 @@ All the calls to the DigitalOcean api requiere to send the key."
   (if docean-droplets-already-fetched
       docean-droplets
     (let* ((params (append (and page `((page . ,(number-to-string page))))
-                           (and per-page `((per_page . ,(number-to-string per-page))))))
-           (response (docean-request "/v2/droplets"
-                                     :parser 'json-read
-                                     :params params
-                                     :success (cl-function
-                                               (lambda (&key data &allow-other-keys)
-                                                 (message "docean request complete")
-                                                 (setq docean-droplets-already-fetched t
-                                                       docean-droplets (mapcar #'docean--create-droplet-item (cdr-safe (assq 'droplets data))))
-                                                 (with-current-buffer (get-buffer-create docean-droplets-buffer-name)
-                                                   (setq tabulated-list-entries (docean--generate-table-droplet-entries))
-                                                   (tabulated-list-print t))))))))))
+                           (and per-page `((per_page . ,(number-to-string per-page)))))))
+      (docean-request "/v2/droplets"
+                      :parser 'json-read
+                      :params params
+                      :success (cl-function
+                                (lambda (&key data &allow-other-keys)
+                                  (message "docean request complete")
+                                  (setq docean-droplets-already-fetched t
+                                        docean-droplets (mapcar #'docean--create-droplet-item (cdr-safe (assq 'droplets data))))
+                                  (with-current-buffer (get-buffer-create docean-droplets-buffer-name)
+                                    (setq tabulated-list-entries (docean--generate-table-droplet-entries))
+                                    (tabulated-list-print t))))))))
 
 ;;;###autoload
 (defun docean-droplet-list ()
@@ -368,23 +369,23 @@ All the calls to the DigitalOcean api requiere to send the key."
   (if docean-actions-already-fetched
       docean-actions
     (let* ((params (append (and page `((page . ,(number-to-string page))))
-                           (and per-page `((per_page . ,(number-to-string per-page))))))
-           (response (docean-request "/v2/actions"
-                                     :parser 'json-read
-                                     :params params
-                                     :success (cl-function
-                                               (lambda (&key data response &allow-other-keys)
-                                                 (message "docean request complete")
-                                                 (setq docean-actions-already-fetched t
-                                                       docean-actions (mapcar #'docean--create-action-item (cdr-safe (assq 'actions data))))
-                                                 (with-current-buffer (get-buffer-create docean-action-buffer-name)
-                                                   (setq tabulated-list-entries (docean--generate-table-action-entries))
-                                                   (tabulated-list-print t))))))))))
+                           (and per-page `((per_page . ,(number-to-string per-page)))))))
+      (docean-request "/v2/actions"
+                      :parser 'json-read
+                      :params params
+                      :success (cl-function
+                                (lambda (&key data &allow-other-keys)
+                                  (message "docean request complete")
+                                  (setq docean-actions-already-fetched t
+                                        docean-actions (mapcar #'docean--create-action-item (cdr-safe (assq 'actions data))))
+                                  (with-current-buffer (get-buffer-create docean-action-buffer-name)
+                                    (setq tabulated-list-entries (docean--generate-table-action-entries))
+                                    (tabulated-list-print t))))))))
 
 (defun docean--create-action-item (data)
   "Create an action item from an response DATA."
   (cons (cdr-safe (assq 'id data))
-        (docean-action-create data)))
+        (docean--action-create data)))
 
 (defun docean--generate-table-action-entries ()
   "Generate droplets table entries."

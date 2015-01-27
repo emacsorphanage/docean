@@ -8,10 +8,10 @@ ELS  = docean.el
 ELCS = $(ELS:.el=.elc)
 
 .PHONY: all
-all: lisp README.md
+all: compile README.md
 
-.PHONY: lisp
-lisp: elpa $(ELCS)
+.PHONY: compile
+compile: elpa $(ELCS)
 
 elpa: Cask
 	$(CASK) install
