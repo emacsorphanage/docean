@@ -112,13 +112,15 @@
 (cl-defstruct (docean-droplet (:constructor docean-droplet--create))
   "A structure holding all the information of a droplet."
   id name memory vcpus disk region image size locked created_at status networks
-  kernel backup_ids snapshot_ids features size_slug)
+  kernel backup_ids snapshot_ids features size_slug next_backup_window)
 
 (defun docean--droplet-create (data)
   "Create a `docean-droplet' struct from an api response DATA."
-  (apply 'docean-droplet--create (cl-loop for (key . value)
-                                          in data
-                                          append (list (intern (format ":%s" key)) value))))
+  (apply 'docean-droplet--create
+         :allow-other-keys t
+         (cl-loop for (key . value)
+                  in data
+                  append (list (intern (format ":%s" key)) value))))
 
 (defun docean-oauth-token ()
   "Return the configured DigitalOcean token."
