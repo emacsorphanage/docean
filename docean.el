@@ -112,7 +112,7 @@
 (cl-defstruct (docean-droplet (:constructor docean-droplet--create))
   "A structure holding all the information of a droplet."
   id name memory vcpus disk region image size locked created_at status networks
-  kernel backup_ids snapshot_ids features size_slug)
+  kernel backup_ids snapshot_ids features size_slug next_backup_window)
 
 (defun docean--droplet-create (data)
   "Create a `docean-droplet' struct from an api response DATA."
