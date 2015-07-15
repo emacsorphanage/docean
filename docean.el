@@ -116,9 +116,11 @@
 
 (defun docean--droplet-create (data)
   "Create a `docean-droplet' struct from an api response DATA."
-  (apply 'docean-droplet--create (cl-loop for (key . value)
-                                          in data
-                                          append (list (intern (format ":%s" key)) value))))
+  (apply 'docean-droplet--create
+         :allow-other-keys t
+         (cl-loop for (key . value)
+                  in data
+                  append (list (intern (format ":%s" key)) value))))
 
 (defun docean-oauth-token ()
   "Return the configured DigitalOcean token."
