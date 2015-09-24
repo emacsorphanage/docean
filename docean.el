@@ -26,7 +26,6 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; [![Travis build status](https://travis-ci.org/emacs-pe/docean.el.png?branch=master)](https://travis-ci.org/emacs-pe/docean.el)
 ;;
 ;; > Note: `docean.el' uses the [API v2.0](https://developers.digitalocean.com/v2/) of DigitalOcean.
 ;;

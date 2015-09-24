@@ -2,7 +2,9 @@
 *Interact with DigitalOcean from Emacs. -*- lexical-binding: t -*-*
 
 ---
-[![Travis build status](https://travis-ci.org/emacs-pe/docean.el.png?branch=master)](https://travis-ci.org/emacs-pe/docean.el)
+[![License GPLv3](https://img.shields.io/badge/license-GPL_v3-green.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
+[![Build Status](https://travis-ci.org/emacs-pe/docean.el.svg?branch=master)](https://travis-ci.org/emacs-pe/docean.el)
+[![MELPA](http://melpa.org/packages/docean-badge.svg)](http://melpa.org/#/docean)
 
 > Note: `docean.el` uses the [API v2.0](https://developers.digitalocean.com/v2/) of DigitalOcean.
 
