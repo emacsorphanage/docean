@@ -34,7 +34,7 @@
 ;;
 ;;; Features:
 ;;  + Show list of droplets.
-;;  + Perform [droplet actions][].
+;;  + Perform [droplet actions].
 ;;  + Show actions performed by an account.
 ;;
 ;;; Usage:
@@ -48,7 +48,7 @@
 ;; To show your droplets you can use `M-x docean-droplet-list`.
 ;;
 ;;; TODO:
-;; + [ ] Handle `meta' abd `links' in API responses.
+;; + [ ] Handle `meta' and `links' in API responses.
 ;;
 ;; [droplet actions]: https://developers.digitalocean.com/#droplet-actions
 
@@ -124,7 +124,7 @@
 (defun docean-oauth-token ()
   "Return the configured DigitalOcean token."
   (or docean-oauth-token
-      (getenv "DO_API_TOKEN")     ;; XXX: Used by dopy, and by extend ansible.
+      (getenv "DO_API_TOKEN") ; XXX: Used by dopy, and by extension Ansible.
       (let* ((docean-auth-info
               (car (auth-source-search :max 1
                                        :host "api.digitalocean.com"
