@@ -57,7 +57,7 @@
 (eval-when-compile (require 'cl-lib))
 
 (require 'json)
-
+(require 'auth-source)
 (require 'request)
 
 (defgroup docean nil
@@ -125,7 +125,15 @@
   "Return the configured DigitalOcean token."
   (or docean-oauth-token
       (getenv "DO_API_TOKEN")     ;; XXX: Used by dopy, and by extend ansible.
-      (error "You need to generate a personal access token.  https://cloud.digitalocean.com/settings/applications")))
+      (let* ((docean-auth-info
+              (car (auth-source-search :max 1
+                                       :host "api.digitalocean.com"
+                                       :require '(:host))))
+             (docean-oauth-token-fn (getf docean-auth-info :secret)))
+        (setq docean-oauth-token
+              (funcall docean-oauth-token-fn))
+        docean-oauth-token)
+      (Error "You need to generate a personal access token.  https://cloud.digitalocean.com/settings/applications")))
 
 (defun docean--endpoint-url (endpoint)
   "Return a DigitalOcean absolure url of an ENDPOINT."
