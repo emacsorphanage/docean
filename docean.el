@@ -38,10 +38,13 @@
 ;;  + Show actions performed by an account.
 ;;
 ;;; Usage:
-;; To configure your account you need generate an api key in
-;; https://cloud.digitalocean.com/settings/applications.  and to set
-;; up, you can follow any of the following options:
+;; In order to use docean.el you need to generate API key for your Digital
+;; Ocean account. Go to https://cloud.digitalocean.com/settings/applications to
+;; generate your API key. docean.el can find your API key in the following
+;; ways:
 ;;
+;;  + Add a `.authinfo.gpg` entry with the host set to "api.digitalocean.com"
+;;  and password set to the API key.
 ;;  + Add `(setq docean-oauth-token "mytoken")` to your `init.el'
 ;;  + Set the environment variable `DO_API_TOKEN'.
 ;;
