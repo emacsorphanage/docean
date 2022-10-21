@@ -1,9 +1,9 @@
+<a href="https://github.com/emacs-pe/docean.el"><img src="https://www.gnu.org/software/emacs/images/emacs.png" alt="Emacs Logo" width="80" height="80" align="right"></a>
 ## docean.el
-*Interact with DigitalOcean from Emacs. -*- lexical-binding: t -*-*
+*Interact with DigitalOcean from Emacs.*
 
 ---
 [![License GPLv3](https://img.shields.io/badge/license-GPL_v3-green.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
-[![Build Status](https://travis-ci.org/emacs-pe/docean.el.svg?branch=master)](https://travis-ci.org/emacs-pe/docean.el)
 [![MELPA](http://melpa.org/packages/docean-badge.svg)](http://melpa.org/#/docean)
 
 > Note: `docean.el` uses the [API v2.0](https://developers.digitalocean.com/v2/) of DigitalOcean.
@@ -14,15 +14,18 @@ Emacs.
 ### Features
 
  + Show list of droplets.
- + Perform [droplet actions][].
+ + Perform [droplet actions].
  + Show actions performed by an account.
 
 ### Usage
 
-To configure your account you need generate an api key in
-https://cloud.digitalocean.com/settings/applications.  and to set
-up, you can follow any of the following options:
+In order to use docean.el you need to generate API key for your Digital
+Ocean account. Go to https://cloud.digitalocean.com/settings/applications to
+generate your API key. docean.el can find your API key in the following
+ways:
 
+ + Add a `.authinfo.gpg` entry with the host set to "api.digitalocean.com"
+ and password set to the API key.
  + Add `(setq docean-oauth-token "mytoken")` to your `init.el`
  + Set the environment variable `DO_API_TOKEN`.
 
@@ -30,12 +33,23 @@ To show your droplets you can use `M-x docean-droplet-list`.
 
 ### TODO
 
-+ [ ] Handle `meta` abd `links` in API responses.
++ [ ] Handle `meta` and `links` in API responses.
 
 [droplet actions]: https://developers.digitalocean.com/#droplet-actions
 
-### Function Documentation
 
+
+### Customization Documentation
+
+#### `docean-oauth-token`
+
+Oauth bearer token to interact with DigitalOcean api.
+
+#### `docean-default-per-page`
+
+Default `per_page` argument used in list requests.
+
+### Function and Macro Documentation
 
 #### `(docean-oauth-token)`
 
